@@ -1,0 +1,99 @@
+// list를 이용한 FIFO의 선형리스트 Queue를 구현한 코드입니다.
+
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct {
+	int key;
+	char grade;
+}element;
+
+typedef struct node {
+	element qdata;
+	struct node* next;
+}QueueNode;
+
+QueueNode* rear = NULL;
+QueueNode* front = NULL;
+void addqlist(element item);
+element deleteqlist();
+void printlist();
+
+int main() {
+	element data;
+	int n,gradeA = 0;
+
+	printf("입력할 데이터의 개수는?? ↓");
+	scanf("%d", &n);
+
+	printf("key와 grade입력 >>\n");
+	for (int i = 0; i < n; i++) {
+		scanf("%d %c", &data.key, &data.grade);
+		addqlist(data);
+	}
+	printf("\n 연결 큐 안의 데이터 ↓ \n");
+	printlist();
+
+	printf("\n1개 삭제 후 삽입 연산 테스트 \n");
+	data = deleteqlist();
+	addqlist(data);
+	printlist();
+
+	printf("grade가 A인 data ↓\n");
+	for (int i = 0; i < n; i++) {
+		data = deleteqlist();
+		if (data.grade == 'A') {
+			printf("%d  ", data.key);
+			gradeA++;
+		}
+		else {
+			addqlist(data);
+		}
+	}
+	printf("\ngrade가 A인 data의 개수는 %d개 입니다.\n\n", gradeA);
+	printf("%d 개의 A grade 삭제 후 Queue안의 데이터 ↓\n", gradeA);
+	printlist();
+
+	
+
+	return 0;
+}
+
+void addqlist(element item) {
+	QueueNode* inode;
+	inode = (QueueNode *)malloc(sizeof(QueueNode));
+	inode->qdata = item;
+	inode->next = NULL;
+
+	if (front == NULL) {  // head노드가 비어있다면
+		front = rear = inode;
+	}
+	else {  // 연결 리스트의 뒤쪽에 삽입한다.
+		rear->next = inode;
+		rear = inode;
+	}
+}
+element deleteqlist() {
+	element item;
+	QueueNode* dNode;
+	if (front == NULL) {
+		printf("Queue가 비어있습니다!!");
+		exit(1);
+	}else{
+		dNode = front;
+		item = front->qdata;
+		front = front->next;
+		free(dNode);
+		return item;
+	}
+}
+
+void printlist() {
+	QueueNode* cur = front;
+
+	while (cur != NULL) {
+		printf("%d\t%c\n", cur->qdata.key, cur->qdata.grade);
+		cur = cur->next;
+	}
+}
