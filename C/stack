@@ -1,1 +1,75 @@
 
+//LIFO 후입선출 구조의 선형 리스트. 연결 리스트를 이용한 Stack 구현
+
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct element{
+	int key;
+	char grade[101];
+}element;
+
+typedef struct node {
+	element data;
+	struct node* next;
+}StackNode;
+
+StackNode* top = NULL;
+
+void pushlist(element data);
+element poplist();
+
+int main() {
+	element data;
+	int cond = 1;
+	int n,cnt = 0;
+
+	while (cond) {
+		printf("Data의 key와 grade를 입력하세요. >>");
+		scanf("%d %s", &data.key, &data.grade);
+		if (data.key != 0) {  //key가 0이 아니라면 stack에 push한다.
+			pushlist(data);
+			cnt++;
+		}
+		printf("stack에 데이터를 계속 입력할까요? (1/0) >>");
+		scanf("%d", &cond);
+	}
+	printf("Stack에 %d개의 데이터가 들어있습니다. \n", cnt);
+
+	printf("몇개의 데이터를 불러오겠습니까? (불러온 데이터는 삭제됩니다.)  >>");
+	scanf("%d", &n);
+	printf("stack에서 불러온 데이터 : \n");
+
+	for (int i = 0; i < n; i++) {
+		data=poplist();
+		printf("key : %d \t grade : %s\n", data.key, data.grade);
+	}
+
+	return 0;
+}
+
+void pushlist(element item) {
+	StackNode* inode= (StackNode*)malloc(sizeof(StackNode));
+	inode->data = item;
+	inode->next = top;  //LIFO구조로 top보다 앞에 삽입하여 데이터 구조상 가장 선두에 오도록 한다.
+	top = inode;
+}
+
+element poplist() {
+	element item;
+	StackNode* dnode;
+
+	if (top == NULL) {
+		printf("Stack이 비어있습니다!!!");
+		exit(1);
+	}
+	else {
+		dnode = top;
+		item = dnode->data;
+		top = top->next; // 다음 데이터로 top을 이동시킨다.
+		free(dnode); //본래 top이었던 dnode의 저장공간을 삭제한다.
+
+		return item;
+	}
+}
