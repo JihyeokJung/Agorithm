@@ -1,0 +1,100 @@
+
+	//이진 트리 역할 : 수식트리, 이진 검색트리, 우선 순위 큐(PQ)
+
+	//완전 이진트리 : 마지막 레벨을 제외하고 모든 레벨이 완전히 채워져 있는 트리. ->마지막 레벨은 왼쪽에서 오른쪽으로 채워져 있어야함.
+
+	//포화 이진트리 : leaf노드를 제외한 모든 내부 노드가 두개의 자식을 가짐. -> leaf노드가 동일한 깊이 or레벨을 가짐.
+
+	//균형 이진트리 : 왼쪽과 오른쪽 트리의 높이 차이가 1이하.(-1,0.1)  ex) AVL, Red-Black트리
+
+
+	//배열로 표현하기 ->
+	//노드 i에 왼쪽 자식은 2*i번 노드
+	//노드 i에 오른쪽 자식은 2*i+1번 노드
+	//노드 i의 부모는 i/2번 노드
+
+	//연결 리스트로  표현  : 배열보다 접근속도 느리지만 삽입, 삭제 쉽고 (몇번의 대입문으로 가능) 노드 수에 제한x(동적 할당함.)
+
+
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct Node {
+	char data;
+	struct Node* left;
+	struct Node* right;
+}Node;
+void printPreorder(Node* root);//전위 순회 (=깊이 우선순회(DFT)), *트리 복사에 사용* =>자식보다 부모가 먼저 생성되어야 하기 때문
+void printInorder(Node* root); //중위 순회(=대칭 순회(왼쪽 오른쪽 대칭으로 순회함)), 이진 탐색트리에서 오름,내림 차순을 가져올 때
+void printPostorder(Node* root); //후위 순회,   *트리 삭제할 때*  ==> 부모보다 자식이 먼저 삭제되어야함.
+Node *createNewNode(char);
+int main(void) {
+	Node* root = createNewNode('A');
+
+	Node* node1 = createNewNode('B');
+	root->left = node1;
+
+	Node* node2 = createNewNode('C');
+	root->right = node2;
+
+	Node* node3 = createNewNode('D');
+	root->left->left = node3;
+
+	Node* node4 = createNewNode('E');
+	root->left->right = node4;
+
+	printf("전위탐색 : ");
+	printPreorder(root);
+	printf("\n");
+	printf("중위탐색 : ");
+	printInorder(root);
+	printf("\n");
+	printf("후위탐색 : ");
+	printPostorder(root);
+	printf("\n");
+}
+Node *createNewNode(char data) {
+	Node* temp = (Node*)malloc(sizeof(Node));
+
+	if (temp != NULL) {
+		temp->data = data;
+		temp->left = NULL;
+		temp->right = NULL;
+	}
+	return temp;
+}
+void printPreorder(Node* root) {
+	if (root == NULL)
+		return;
+
+	//root데이터 출력
+	printf("%c ", root->data);
+	//left subTree 재귀
+	printPreorder(root->left);
+	//right subTree 재귀
+	printPreorder(root->right);
+}
+void printInorder(Node* root) {
+	if (root == NULL)
+		return;
+
+	//왼쪽 서브트리로 재귀
+	printInorder(root->left);
+
+	//root 데이터 출력
+	printf("%c ", root->data);
+
+	//오른쪽 서브트리로 재귀
+	printInorder(root->right);
+}
+void printPostorder(Node* root) {
+	if (root == NULL)
+		return;
+
+	//왼쪽으로 재귀
+	printPostorder(root->left);
+	//오른쪽으로 재귀
+	printPostorder(root->right);
+	//루트 데이터 출력
+	printf("%c ", root->data);
+}
