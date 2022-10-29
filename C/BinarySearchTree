@@ -1,0 +1,148 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define LINE printf("-------------------------------------------\n");
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+int count = 0;  //노드의 개수
+
+typedef struct Element {
+	int key;
+	char grade;
+}element;
+
+typedef struct Binary_node {
+	element data;
+	struct Binary_node* left;
+	struct Binary_node* right;
+}BinNode;
+
+BinNode* getBinaryNode(BinNode*, element);
+BinNode* deleteNode(BinNode*, int);
+void searchNode(BinNode*, int);
+BinNode* addNode(BinNode*, element);
+void showTree(BinNode*);
+BinNode* minValueNode(BinNode*);
+//메인
+int main() {
+	
+	BinNode* root = NULL;
+	element temp;
+
+	printf("입력할 데이터의 Key와 Value(character)를 입력해 주세요.↓\n");
+	for (int i = 0; i < 5; i++) {
+		scanf("%d %c", &temp.key, &temp.grade);
+		root = addNode(root, temp);
+	}
+
+	showTree(root);
+	int key;
+	printf("검색할 데이터의 key를 입력하세요 >>");
+	scanf("%d", &key);
+	searchNode(root, key);
+	LINE;
+	srand(time(NULL));
+	printf("Node 5개를 추가로 삽입합니다.\n");
+	for (int i = 0; i < 5; i++) {
+		temp.key = rand()%100 +1;
+		temp.grade = (char)(rand() % 26 + 65);
+		root = addNode(root, temp);
+	}
+	showTree(root);
+	LINE;
+	printf("삭제할 데이터의 key를 입력하세요 >>");
+	scanf("%d", &key);
+	deleteNode(root, key);
+	showTree(root);
+	return 0;
+}
+
+BinNode* getBinaryNode(element data) {  //노드 생성 함수
+	BinNode* newNode = (BinNode*)malloc(sizeof(BinNode));
+	newNode->left = NULL;
+	newNode->right = NULL;
+	newNode->data = data;
+
+	return newNode;
+}
+
+BinNode* addNode(BinNode* tree, element item) {
+	if (tree == NULL) {  //노드가 NULL이라면
+		tree = getBinaryNode(item);
+		printf("node 생성완료 (%2d), counter : %d\n", tree->data.key, ++count);
+	}
+	else if (item.key == tree->data.key) {
+		printf("★[이진 트리] - 중복된 값을 입력하였습니다..\n");
+	}
+	else if (tree->data.key > item.key) {
+		tree->left = addNode(tree->left, item);
+	}
+	else {
+		tree->right = addNode(tree->right, item);
+	}
+
+	return tree;
+}
+
+void searchNode(BinNode* ptr, int key) {
+	if (ptr == NULL) {
+		printf("키 값이 (%2d)인 노드는 없습니다. [검색 실패]\n", key);
+	}
+	else if (key == ptr->data.key) {
+		printf("key값이 (%2d)인 데이터의 값은 %c입니다.\n", ptr->data.key, ptr->data.grade);
+	}
+	else if (key < ptr->data.key) {
+		searchNode(ptr->left, key);
+	}
+	else {
+		searchNode(ptr->right, key);
+	}
+}
+void showTree(BinNode* tree) {
+	if (tree != NULL) {
+		showTree(tree->left);
+		printf("ket : %d, value: %c \n", tree->data.key, tree->data.grade);
+		showTree(tree->right);
+	}
+}
+BinNode* minValueNode(BinNode* node){
+	//커서 노드
+	BinNode* cur = node;
+	while (cur && cur->left != NULL) {
+		cur = cur->left;
+	}
+
+	return cur;
+}
+BinNode* deleteNode(BinNode *root, int key) {
+
+	//root가 비어있을 경우.
+	if (root == NULL) {
+		return root;
+	}
+	//key가 노드의 키값보다 작거나 큰 경우 [하위노드로 이동]
+	if (key < root->data.key) {
+		root->left = deleteNode(root->left, key);
+	}
+	else if (key > root->data.key) {
+		root->right = deleteNode(root->right, key);
+	}
+	else {  //키 값이 일치하느 ㄴ경우 [삭제] 
+		//노드의 자녀가 한개일 경우 & 자녀가 없는 경우
+		if (root->left == NULL) {  //오른쪽 노드만 있을 경우 ( = 왼쪽 노드가 NULL이다.)
+			BinNode* temp = root->right;
+			free(root);
+			return temp;
+		}
+		else if (root->right == NULL) {
+			BinNode* temp = root->left;
+			free(root);
+			return temp;
+		}
+
+		BinNode* temp = minValueNode(root->right);
+
+		root->data = temp->data;
+		root->right = deleteNode(root->right, temp->data.key);
+	}
+}
+
