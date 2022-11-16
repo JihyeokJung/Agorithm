@@ -1,0 +1,261 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+#include<windows.h>
+
+typedef struct book {
+   char book_num[10];
+   char book_name[30];
+   char book_author[10];
+   int book_date;
+}book;
+
+//----------------------메뉴 나타내기----------------------------------
+int print_main_menu() {
+   int input;
+   printf(" *** Database 도서관입니다. 메뉴를 선택해 주세요. ***\n\n");
+   printf("\t\t1. 도서 추가하기\n\t\t2. 도서 삭제하기\n\t\t3. 도서 조회하기\n\t\t4. 책 정보 변경하기\n\t\t5. 종료");
+   printf("\n\n\t\t>>");
+   scanf("%d", &input);
+   return input;
+}
+
+// -----------------------데이터 추가하기---------------------------------
+void insert_book(FILE *fp) {
+   book *newBook=(book *)malloc(sizeof(book));
+
+   strcpy(newBook->book_author, "미상");
+   newBook->book_date = 9999;
+   strcpy(newBook->book_name ,"미상");
+   strcpy(newBook->book_num, "미상");
+
+   printf("도서 번호, 도서명, 저자, 출판년도를 순서대로 기재해주세요.\n >> ");
+   scanf("%s %s %s %d", &newBook->book_num, &newBook->book_name, &newBook->book_author, &newBook->book_date);
+   char date_str[10];
+   _itoa(newBook->book_date, date_str, 10);
+   char* Book_data = strcat(strcat(strcat(strcat(newBook->book_num, ","), strcat(newBook->book_name, ",")), strcat(newBook->book_author, ",")), date_str);  //파일에 데이터들을 하나의 문자열로 저장
+   fputs(Book_data, fp);
+   fputs("\n", fp);
+   system("cls");
+   printf("추가 되었습니다.\n\n");
+}
+
+//----------------------데이터 삭제하기--------------------------------
+void delete_book(FILE* fp,char *arr[]) {   //파일의 데이터를 불러와서 삭제할 데이터의 key값이 같은것은 빼고 새로 쓰기.
+   char input[10];
+   char arr2[100];
+   int i = 0;
+
+   printf("\n\n삭제할 도서의 도서 번호를 입력 해주세요\n");
+   printf("\t>>");
+   scanf("%s", input);
+
+   while (arr[i] != NULL)
+   {
+      strcpy(arr2, arr[i]);    //arr[i]문자열을 arr2에 복사한다. strtok을 나누면 strtok이 후에 arr[i]에 book_num만 남는다. arr2에 key를 담아야함.
+      char* ptr = strtok(arr2, ",");
+
+      if (strcmp(ptr, input) == 0) {
+         i++;
+         continue;
+      }
+      else {    //삭제 할 데이터 아니면 그대로 다시 저장
+         printf("%s\n", arr[i]);
+         fputs(arr[i], fp);
+         fputs("\n", fp);
+      }
+      i++;
+   }
+   
+   system("cls");
+   printf("삭제가 완료되었습니다..\n");
+}
+
+//----------------------데이터 조회하기--------------------------------
+void search_book(FILE* fp) {
+   char arr[100];
+   char input[10];
+   printf("\n\n조회 할 도서의 도서 번호를 입력 해주세요\n");
+   printf("\t>>");
+   scanf("%s", input);
+
+   system("cls");
+   while (fgets(arr, 100, fp) != NULL)  //없을때까지 하나씩 불러온다.
+   {
+      book a;
+      char* ptr = strtok(arr, ",");
+
+      if (strcmp(ptr, input) == 0) {
+         strcpy(a.book_num, ptr);
+
+         ptr = strtok(NULL, ",");
+         strcpy(a.book_name, ptr);
+
+         ptr = strtok(NULL, ",");
+         strcpy(a.book_author, ptr);
+
+         ptr = strtok(NULL, ",");
+         a.book_date = atoi(ptr);
+
+         printf("%s의 도서 정보입니다.\n\n", input);
+         printf("도서 번호\t도서명\t\t저자\t\t출판년도\n >> ");
+         printf("%s\t%s\t\t%s\t\t%d\n", a.book_num, a.book_name, a.book_author, a.book_date);
+      }
+   }
+   printf("\n\n");
+}
+
+//----------------------데이터 변경하기--------------------------------
+void change_book(FILE* fp, char*arr[]) {
+   char input[10];
+   char arr2[100];
+   int i = 0;
+
+   printf("\n\n변경 할 도서의 도서 번호를 입력 해주세요\n");
+   printf("\t>>");
+   scanf("%s", input);
+
+   while (arr[i] != NULL)  //없을때까지 하나씩 불러온다.
+   {
+      book Book;
+      strcpy(arr2, arr[i]);
+      char* ptr = strtok(arr2, ",");
+
+      if (strcmp(ptr, input) == 0) {
+         strcpy(Book.book_num, ptr);
+
+         ptr = strtok(NULL, ",");
+         strcpy(Book.book_name, ptr);
+
+         ptr = strtok(NULL, ",");
+         strcpy(Book.book_author, ptr);
+
+         ptr = strtok(NULL, ",");
+         Book.book_date = atoi(ptr);
+
+         printf("%s의 도서 정보입니다.\n\n", input);
+         printf("도서 번호\t도서명\t\t저자\t출판년도\n >> ");
+         printf("%s\t%s\t%s\t%d\n\n", Book.book_num, Book.book_name, Book.book_author, Book.book_date);
+
+         int kind;
+         printf("변경 항목과 변경 할 내용을 입력하세요 1). 도서명   2). 저자   3). 출판년도\n\t>>");
+         scanf("%d", &kind);
+
+         switch (kind) {
+         case 1:
+            scanf("%s", &Book.book_name);
+            break;
+         case 2:
+            scanf("%s", &Book.book_author);
+            break;
+         case 3:
+            scanf("%d", &Book.book_date);
+         }
+         
+         char date_str[10];
+         _itoa(Book.book_date, date_str, 10);
+         char* Book_data = strcat(strcat(strcat(strcat(Book.book_num, ","), strcat(Book.book_name, ",")), strcat(Book.book_author, ",")), date_str);  //파일에 데이터들을 하나의 문자열로 저장
+         fprintf(fp,Book_data);
+         fprintf(fp,"\n");
+         
+         i++;
+      }
+      else {  //변경 내용 없는 문자열 다시 저장
+         fputs(arr[i], fp);
+         fputs("\n", fp);
+         i++;
+      }
+   }
+   printf("\n\n");
+   system("cls");
+   printf("책 정보가 변경 되었습니다.\n\n");
+}
+
+int main(){
+   int input, flag = 1, i = 0;
+   FILE* fp;
+   char* arr[500] = {0,};  //포인터 변수를 초기화 해줘야한다.. -1073741819 코드 종료가 계속 발생했었다..
+   char arr2[100];
+
+   while (1) {
+      input = print_main_menu();
+      system("cls");
+
+      switch (input)
+      {
+      case 1:
+         if ((fp = fopen("C://Users/정지혁//Desktop//LibraryFileDatabase//Library_data.txt", "a")) == NULL) /*"a"덧붙이기 전용 -> 파일 없으면 생성, 있으면 덮어씀.*/
+            printf("\t*** 파일 불러오기를 실패하였습니다. ***");
+         else {
+            printf("'도서 추가하기' 입니다.\n\n");
+            insert_book(fp);
+            fclose(fp);
+         } 
+         break;
+      case 2:
+         i = 0;
+         if ((fp = fopen("C://Users/정지혁//Desktop//LibraryFileDatabase//Library_data.txt", "r")) == NULL)  //arr에 파일에 있는 문자열을 모두 꺼내어 저장한다.
+            printf("\t*** 파일 불러오기를 실패하였습니다. ***");
+         else {
+            while (fgets(arr2, 100, fp) != NULL) {
+               arr[i] = (char*)malloc(sizeof(arr2));  //문자열 길이만큼 저장공간 할당
+               strcpy(arr[i], arr2);
+               i++;
+            }
+         }
+
+         if ((fp = fopen("C://Users/정지혁//Desktop//LibraryFileDatabase//Library_data.txt", "w")) == NULL) //쓰기 모드로 다시 염 -> txt파일이 덮어쓰기 된다..
+            printf("\t*** 파일 불러오기를 실패하였습니다. ***");
+         else {
+            printf("도서 삭제하기입니다.\n");
+            delete_book(fp,arr);
+            fclose(fp);
+         }
+         break;
+      case 3:
+         if ((fp = fopen("C://Users/정지혁//Desktop//LibraryFileDatabase//Library_data.txt", "r")) == NULL)
+            printf("\t*** 파일 불러오기를 실패하였습니다. ***");
+         else {
+            printf("도서  조회하기 입니다.\n");
+            search_book(fp);
+            fclose(fp);
+         }
+         break;
+      case 4:
+         i = 0;
+         char arr2[100];
+         if ((fp = fopen("C://Users/정지혁//Desktop//LibraryFileDatabase//Library_data.txt", "r")) == NULL)  //arr에 파일에 있는 문자열을 모두 꺼내어 저장한다.
+            printf("\t*** 파일 불러오기를 실패하였습니다. ***");
+         else {
+            while (fgets(arr2, 100, fp) != NULL) {
+               arr[i] = (char*)malloc(sizeof(arr2));  //문자열 길이만큼 저장공간 할당
+               strcpy(arr[i], arr2);
+               i++;
+            }
+         }
+
+         if ((fp = fopen("C://Users/정지혁//Desktop//LibraryFileDatabase//Library_data.txt", "w")) == NULL)
+            printf("\t*** 파일 불러오기를 실패하였습니다. ***");
+         else {
+            printf("책 정보 변경하기 입니다.\n");
+            change_book(fp,arr);
+            fclose(fp);
+         }
+         break;
+      case 5:
+         printf("\n     *** 프로그램을 종료합니다. 안녕히 가세요. ***\n");
+         flag = 0;
+         break;
+      default:
+         printf("error : 다시 골라주세요.\n\n");
+         break;
+      }
+      if (!flag) {
+         break;
+      }
+   }
+
+
+   
+   return 0;
+}
