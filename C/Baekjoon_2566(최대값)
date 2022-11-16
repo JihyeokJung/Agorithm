@@ -1,0 +1,37 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define NUM 9
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+int main() {
+	int **arr;
+	arr = (int **)malloc(sizeof(int*) * NUM);
+
+	for (int i = 0; i < NUM; i++)
+		*(arr+i) = (int*)malloc(sizeof(int) * NUM);
+
+	int col = 0;
+	for (int i = 0; i < NUM * NUM; i++) {
+		scanf("%d", &arr[col][i % NUM]);
+		if ((i + 1) % NUM == 0)
+			col++;
+	}
+
+	int max = 0;
+	col = 0;
+	int xPos=0, yPos=0;
+
+	for (int i = 0; i < NUM * NUM; i++) {
+		if (arr[col][i % NUM] >= max) {
+			max = arr[col][i % NUM];
+			xPos = i%NUM + 1;
+			yPos = col + 1;
+		}
+		if ((i + 1) % NUM == 0)
+			col++;
+	}
+
+	printf("%d\n", max);
+	printf("%d %d", yPos, xPos);
+	return 0;
+}
