@@ -1,0 +1,59 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+int compare(const void *A , const void *B) {
+	int a = *(int*)A;
+	int b = *(int*)B;
+
+	return a - b;
+}
+void binarySearch(int *arr , int key, int start, int end) {
+	int left = start;
+	int right = end-1;
+	int middle;
+	int cond = 0;
+
+	while (left <= right) {
+		cond = 0;
+		middle = (left + right) / 2;
+
+		if (key > arr[middle]) {
+			left = middle+1;
+		}
+		else if (key < arr[middle]) {
+			right = middle-1;
+		}
+		else {
+			printf("1\n");
+			cond = 1;
+			break;
+		}
+	}
+
+	if (!cond) {
+		printf("0\n");
+	}
+}
+int main() {
+	int* arr;
+	int* keys;
+	int N, M;
+
+	scanf("%d", &N);
+	arr = (int*)malloc(sizeof(int) * N);
+	for (int i = 0; i < N; i++) {
+		scanf("%d", &arr[i]);
+	}
+	qsort(arr, N, sizeof(int), compare);
+
+	scanf("%d", &M);
+	keys = (int*)malloc(sizeof(int) * M);
+	for (int i = 0; i < M; i++) {
+		scanf("%d", &keys[i]);
+	}
+
+	for (int i = 0; i < M; i++)
+		binarySearch(arr, keys[i], 0, N);
+	
+	return 0;
+}
