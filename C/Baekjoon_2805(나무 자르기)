@@ -1,0 +1,54 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+int compare(const void* A, const void* B) {
+	int a = *(int*)A;
+	int b = *(int*)B;
+
+	return a - b;
+}
+
+int main() {
+	int* arr;
+	int N, M;
+	//arr의 각 원소%x == M이어야함.
+	scanf("%d %d", &N, &M);
+
+	arr = (int*)malloc(sizeof(int) * N);
+
+	for (int i = 0; i < N; i++)
+		scanf("%d", &arr[i]);
+
+	qsort(arr, N, sizeof(int), compare);
+
+	int left = 0;
+	int right = arr[N-1];
+
+	long long sum;
+	int max = 0;
+
+	while (left <= right) {
+		int middle = (left + right) /2; 
+		sum = 0;
+		for (int i = 0; i < N; i++) {
+			if(arr[i]>=middle)
+				sum += (arr[i]-middle);  //middle로 자르면 몇이 남는지
+		}
+
+		if (sum >= M) {			//더 많거나 같게 잘렸으면  -> 더 큰 수로 자른다.
+			if (middle >= max) {	    //원하는 만큼 잘렸다면
+				max = middle;
+			}
+			left = middle + 1;
+		}
+		else {                         //더 적게 남았다면 -> 더 작은 수로 자른다.
+			right = middle - 1;
+		}
+
+	}
+	printf("%d", max);
+	return 0;
+}
+/*sum 변수의 자료형이 int일 경우 오류가 발생한다.
+  stack메모리에서 overflow발생. 
+*/
