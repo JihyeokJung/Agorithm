@@ -1,0 +1,55 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+
+int compare(const void* A, const void* B) {
+	int a = *(int*)A;
+	int b = *(int*)B;
+
+	return a - b;
+}
+
+int main() {
+	int N, M;
+	int* arr;
+	scanf("%d %d", &N, &M);
+	
+	arr = (int*)malloc(sizeof(int) * N);
+
+	for (int i = 0; i < N; i++)
+		scanf("%d", &arr[i]);
+
+	qsort(arr, N, sizeof(int), compare);
+	/*
+	for (int i = 0; i < N; i++)
+		printf("%d", arr[i]);
+	printf("\n");
+	*/
+	int left = 1;
+	int right = arr[N - 1] - arr[0];  //최대 거리 ; 끝값 - 처음값
+	int answer = -1; 
+
+	while (left <= right) {
+		int middle = (left + right) / 2;  //거리의 중간값
+		int cnt = 1; //시작점에 하나 설치함.
+		int prev = 0; //시작 인덱스
+		
+		for (int i = 1; i < N; i++) {
+			// prev(기준점과) 현재 위치의 거리가 middle보다 클 때 공유기 설치
+			if (arr[i] - arr[prev] >= middle) {
+				prev = i; //설치했으면 기준점 변경 -> 기준점에서 다음점까지의 거리계산
+				cnt++; //몇개 설치했는지
+				//printf("%d ->middle : %d\n",arr[i],middle);
+			}
+		}
+
+		if (cnt >= M) {  //middle이상을 유지하며 M개의 공유기를 설치 가능하다.
+			left = middle + 1;
+			answer = middle;
+		}else{
+			right = middle - 1;
+		}
+	}
+	printf("%d", answer);
+	return 0;
+}
