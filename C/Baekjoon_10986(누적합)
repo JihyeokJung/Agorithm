@@ -1,0 +1,37 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+typedef long long LL;
+
+int main() {
+	long long* remains;
+	int N, M;
+
+	scanf("%d %d", &N, &M);
+
+	remains= (LL*)malloc(sizeof(LL) * M);  //나머지는 0~M-1이다.
+
+	for (int i = 0; i < M; i++)
+		remains[i] = 0;
+
+	LL sum = 0;
+	int input;
+
+	for (int i = 0; i < N; i++) {
+		scanf("%d", &input);
+		sum += input;
+		remains[sum % M]++;
+	}
+
+	//나머지들의 합이 M으로 나누어진다면 값의 합이 M으로 나누어진다.
+	//나머지들의 계산이 가능한 이유 -> j~i까지의 합은 sums[j] - sums[i-1]와 같다.  
+	//(A + B) % M 값은((A % M) + (B % M)) % M 값과 같다
+
+	LL cnt = remains[0];
+	for (int k = 0; k < M; k++) {
+		    cnt += remains[k] * (remains[k] - 1) / 2;
+	}
+
+	printf("%lld", cnt);
+	return 0;
+}
