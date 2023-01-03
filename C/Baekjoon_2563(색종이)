@@ -1,0 +1,40 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+#define MAX 101
+
+int arr[MAX][MAX] = { 0, };
+int cnt = 0;
+void count(int *x, int *y, int N, int flag){
+	if (flag >=N) {
+		printf("%d", cnt);
+		return;
+	}
+
+	for (int i = x[flag]; i < x[flag] + 10; i++) {
+		for (int j = y[flag]; j < y[flag] + 10; j++) {
+			if (arr[i][j] < 1) {
+				arr[i][j]++;
+				cnt++;
+			}
+		}
+	}
+	 count(x, y, N, flag+1);
+}
+int main() {
+	int N;
+
+	scanf("%d", &N);
+
+	// -> 100*100 배열에서 색종이로 뒤덥힌 좌표를 1로 변경한다. 그리고 1의 개수를 카운트.
+	int *X = (int*)malloc(sizeof(int) * N);
+	int *Y = (int*)malloc(sizeof(int) * N);
+	
+	for (int i = 0; i < N; i++) {
+		scanf("%d %d", &X[i], &Y[i]);
+	}
+
+	count(X, Y, N, 0);
+
+	return 0;
+}
