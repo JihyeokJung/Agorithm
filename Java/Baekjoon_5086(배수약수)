@@ -1,0 +1,41 @@
+import java.util.Scanner;
+
+public class  {
+    public static void main(String[] args){
+        Scanner scan  = new Scanner(System.in);
+
+        boolean factor;  //첫 번째 수가 두 번째 수의 약수인지
+        boolean multiple; //첫 번째 수가 두 번째 수의 배수인지
+        int x=-1,y=-1;
+
+        while(x!=0 && y!=0){
+            factor = false;
+            multiple = false;
+
+            x = scan.nextInt();
+            y = scan.nextInt();
+
+            if(x==0 && y==0){
+                break;
+            }else if(x>y){
+                if(x%y == 0 )
+                    multiple = true;
+            }else{  //x<y
+                if(y%x == 0)
+                    factor = true;
+            }
+
+
+            if(factor && !multiple){
+                System.out.println("factor");
+            }
+            if(!factor && multiple){
+                System.out.println("multiple");
+            }
+            if(!factor && !multiple){
+                System.out.println("neither");
+            }
+        }
+    }
+
+}
