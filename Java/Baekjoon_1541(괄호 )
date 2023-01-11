@@ -1,0 +1,27 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class Main{
+    public static void main(String[] args) throws Exception {
+            BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+
+            String input1[]=br.readLine().split("-");
+
+            int result=Integer.MAX_VALUE;   //초기값
+
+            for(int i=0;i<input1.length;i++) {
+                String nums[]=input1[i].split("\\+");  // 특수기호 '+'등으로 못나눈다. -> \\+로 기호 사용
+                int n=0;
+                for(String num:nums)
+                    n+=Integer.parseInt(num);
+                //첫번째 값의 경우 -를 적용하면 안된다.
+                if(result==Integer.MAX_VALUE)   //값이 변하지 않았다면 -> 첫번째는 블럭은 빼지않는다.
+                    result=n;
+                else
+                    result-=n;
+            }
+
+            System.out.println(result);
+    }
+        
+}
