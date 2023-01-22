@@ -1,0 +1,178 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+/*
+push_front X : 정수 X를 덱의 앞에 넣는다.
+push_back X : 정수 X를 덱의 뒤에 넣는다.
+pop_front : 덱의 가장 앞에 있는 수를 빼고, 그 수를 출력한다.만약, 덱에 들어있는 정수가 없는 경우에는 - 1을 출력한다.
+pop_back : 덱의 가장 뒤에 있는 수를 빼고, 그 수를 출력한다.만약, 덱에 들어있는 정수가 없는 경우에는 - 1을 출력한다.
+size : 덱에 들어있는 정수의 개수를 출력한다.
+empty : 덱이 비어있으면 1을, 아니면 0을 출력한다.
+front : 덱의 가장 앞에 있는 정수를 출력한다.만약 덱에 들어있는 정수가 없는 경우에는 - 1을 출력한다.
+back : 덱의 가장 뒤에 있는 정수를 출력한다.만약 덱에 들어있는 정수가 없는 경우에는 - 1을 출력한다.
+*/
+
+typedef struct Node {
+	int data;
+	struct  Node* next;
+}Node;
+typedef struct Deque {
+	int count;
+	Node* head;
+	Node* rear;
+}Deque;
+
+Deque *dque=NULL;
+
+void initDeque();
+void push_front(int);
+void push_back(int);
+void pop_front();
+void pop_back();
+void size();
+void empty();
+void front();
+void back();
+
+
+int main(){
+	initDeque();  //Deque생성
+	char input[15];
+	int data;
+	int N;
+	scanf("%d", &N);
+
+	for (int i = 0; i < N; i++) {
+		scanf("%s", &input);
+
+		if (strcmp(input, "push_front") == 0) {
+			scanf("%d", &data);
+			push_front(data);
+		}
+		else if (strcmp(input, "push_back") == 0) {
+			scanf("%d", &data);
+			push_back(data);
+		}
+		else if (strcmp(input, "pop_front") == 0) {
+			pop_front();
+		}
+		else if (strcmp(input, "pop_back") == 0) {
+			pop_back();
+		}
+		else if (strcmp(input, "size") == 0) {
+			size();
+		}
+		else if (strcmp(input, "empty") == 0) {
+			empty();
+		}
+		else if (strcmp(input, "front") == 0) {
+			front();
+		}
+		else if (strcmp(input, "back") == 0) {
+			back();
+		}
+		else
+			continue;
+	}
+}
+
+void initDeque() {
+	dque = (Deque*)malloc(sizeof(Deque));
+	dque->count = 0;
+	dque->head = dque->rear = NULL;
+}
+
+void push_front(int X) {
+	Node* newNode = NULL;
+	newNode = (Node*)malloc(sizeof(Node));
+	newNode->data = X;
+	newNode->next = NULL;
+
+	if (dque->count == 0)
+		dque->head =dque -> rear = newNode;
+	else {
+		newNode->next = dque->head;
+		dque->head = newNode;
+	}
+	dque->count++;
+}
+
+void push_back(int X) {
+	Node* newNode = NULL;
+	newNode = (Node*)malloc(sizeof(Node));
+	newNode->data = X;
+	newNode->next = NULL;
+
+	if (dque->count == 0)
+		dque->head = dque->rear = newNode;
+	else {
+		dque->rear->next = newNode;
+		dque->rear = newNode;
+	}
+	dque->count++;
+}
+void pop_front() {
+	Node* ptr = NULL;
+
+	if (dque->count == 0)
+		printf("-1\n");
+	else {
+		ptr = dque->head;
+		printf("%d\n", ptr->data);
+		dque->head = ptr->next;
+
+		free(ptr);
+		dque->count--;
+	}
+}
+void pop_back() {
+
+	if (dque->count == 0)
+		printf("-1\n");
+	else {
+		Node* ptr = dque->head;
+		Node* prev=NULL;
+
+		while (ptr->next != NULL) {
+			prev = ptr;
+			ptr = ptr->next;
+		}
+		printf("%d\n", ptr->data);
+
+        if(prev== NULL){
+            dque->head = dque->rear = NULL;
+            free(ptr);
+            
+        }
+        else{
+            free(ptr);
+            prev->next = NULL;
+			dque->rear = prev;
+        }
+
+		dque->count--;
+	}
+
+}
+void size() {
+	printf("%d\n", dque->count);
+}
+void empty() {
+	if (dque->count == 0)
+		printf("1\n");
+	else
+		printf("0\n");
+}
+void front() {
+	if (dque->count == 0)
+		printf("-1\n");
+	else
+		printf("%d\n", dque->head->data);
+}
+void back() {
+	if (dque->count == 0)
+		printf("-1\n");
+	else
+		printf("%d\n", dque->rear->data);
+}
