@@ -1,0 +1,25 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        long n = scan.nextLong();
+
+        for (long i = 0; i < n; i++) {
+            long x = scan.nextLong();
+            long y = scan.nextLong();
+
+            long num = 1;
+            long dist = y - x;
+
+            for (;num * num <= dist; num++);
+
+            num--;
+            long square = num * num;
+            long left = (long) Math.ceil((double) (dist - square) / (double) num);
+            long result = (num * 2 - 1) + left;
+            System.out.println(result);
+        }
+        scan.close();
+    }
+}
