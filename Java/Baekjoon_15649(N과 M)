@@ -1,0 +1,44 @@
+import java.io.*;
+import java.util.StringTokenizer;
+public class Main {
+    static int N,M;
+    static int numArr[];
+    public static boolean[] visited;
+    public static StringBuilder sb = new StringBuilder();
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+
+        numArr = new int[M];
+        visited = new boolean[N];
+
+
+        dfs(N,M,0);
+
+        System.out.println(sb);
+    }
+
+    static void dfs(int N, int M, int depth){
+        if(depth == M) { //깊이가 M과 같아지면 저장된 배열 출력
+            for(int i : numArr) {
+                sb.append(i).append(' ');
+            }
+            sb.append('\n');
+            return;
+        }
+
+        for(int i = 0; i<N; i++) {
+            if(!visited[i]) { //방문하지 않았다면(false)
+                visited[i] = true; //방문상태 (true)로 바꾸고
+                numArr[depth] =i+1; //배열에 해당 값+1해서 저장(0부터이기 때문)
+                dfs(N,M,depth+1); //다음 자식 노드 방문을 위한 재귀호출
+                visited[i] = false; //방문이 끝나고 돌아오면 방문하지 않은 상태로 변경
+            }
+        }
+
+    }
+}
