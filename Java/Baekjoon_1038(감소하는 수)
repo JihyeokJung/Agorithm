@@ -1,0 +1,33 @@
+import java.util.*;
+ 
+public class Main {    
+    
+    static ArrayList<Long> list;
+    
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        
+        int n = scan.nextInt();
+        list = new ArrayList<>();
+        
+        if(n <= 10) System.out.println(n);
+        else if(n > 1022) System.out.println("-1");
+        else {
+            for(int i = 0; i < 10; i++) {
+                bp(i, 1);
+            }
+            Collections.sort(list);
+ 
+            System.out.println(list.get(n));
+        }
+    }    
+    // 10까지 넣는 이유 -> 11을 넣으면 1과1이 같음. 20을 넣으면 20+0이 같음. 9를 넣으면 9(idx:1),8(idx:2)...0(idx:10)이 최대로 큰 감소하는 
+    public static void bp(long num, int idx) {
+        if(idx > 10) return;
+        
+        list.add(num);
+        for(int i = 0; i < num % 10; i++) {
+            bp((num * 10) + i, idx + 1);
+        }
+    }
+}
