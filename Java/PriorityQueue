@@ -1,0 +1,35 @@
+import java.util.PriorityQueue;
+
+public class aaa{  //우선순위 큐 자바
+    public static void main(String[] args){
+        String str = "aatggctgctatatcgatcgtagccatataccgcgcgcgatatatcctagcagtttttcactcgatcgatcgat";
+        PriorityQueue<Node> queue = new PriorityQueue<Node>();
+        queue.add(new Node('a', 120));
+        queue.add(new Node('t',90));
+        queue.add(new Node('g',450));
+        queue.add(new Node('c', 270));
+
+        int size = queue.size();
+        for(int i=0; i<size; i++)
+            System.out.println(queue.remove());
+    }
+
+    static class Node implements Comparable<Node>{
+        char alphabet;
+        int freq;
+
+        public Node(char alphabet, int freq) {
+            this.alphabet = alphabet;
+            this.freq = freq;
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            return this.freq - o.freq;
+        }
+        @Override
+        public String toString(){
+            return String.format("%c(%d)",alphabet,freq);
+        }
+    }
+}
