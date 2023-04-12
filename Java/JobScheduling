@@ -1,0 +1,83 @@
+import java.util.*;
+
+class Job implements Comparable<Job>{
+    int start;
+    int end;
+    public Job(int start, int end){
+        this.start = start;
+        this.end = end;
+    }
+
+    @Override
+    public int compareTo(Job o) {           //1. 정렬 방법 -> 빠른 시작 시간 순으로
+        return this.start - o.start;
+    }
+    @Override
+    public String toString(){
+        return "["+this.start+", "+this.end+"] ";
+    }
+}
+class Machine{
+    int machineNum;
+    int endTime;
+    ArrayList<Job> jobs = new ArrayList<>();
+
+    public Machine(int num){;
+        machineNum = num;
+        endTime = 0;
+    }
+    public void print(){
+        System.out.print("Machine "+machineNum+" : ");
+        for(int i=0 ;i<jobs.size() ; i++){
+            System.out.print(jobs.get(i).toString()+", ");
+        }
+        System.out.println();
+    }
+}
+class Main{
+
+    public static void main(String[] args) {
+        ArrayList<Job> list = new ArrayList<>();
+
+        list.add(new Job(7, 8));               //2. 교재에서 예제로 나온 job들의 객체 생성
+        list.add(new Job(3, 7));
+        list.add(new Job(1, 5));
+        list.add(new Job(5, 9));
+        list.add(new Job(0, 2));
+        list.add(new Job(6, 8));
+        list.add(new Job(1, 6));
+        int lenght = list.size();
+
+        Collections.sort(list);                 //3. 정렬
+
+//        for(int i=0 ; i< list.size() ; i++){
+//            System.out.println(list.get(i).start);
+//        }
+        int machineNum = 1;
+        List<Machine> machines = new ArrayList<>();  //기계 최대개수 만큼 생성?
+        machines.add(new Machine(machineNum));           // 1번 기계 생성
+        for(int i=0 ; i< lenght ; i++){              //O(n)
+            Job job = list.remove(0);
+
+            boolean flag = false;                    // flag -> 작업이 할당 되었다면 true
+            for(int j=0; j< machines.size() ; j++){  // O(m) ->m: 생성된 기계 수
+                if (machines.get(j).endTime <= job.start) {
+                    machines.get(j).jobs.add(job);
+                    machines.get(j).endTime = job.end;
+                    flag = true;
+                    break;
+                }
+            }
+            if(!flag){  // 작업이 할당 되지 않았다면 -> 새로운 기계 생성 & 할당
+                machines.add(new Machine(++machineNum));
+                machines.get(machines.size()-1).jobs.add(job);
+                machines.get(machines.size()-1).endTime = job.end;
+            }
+
+        }
+        for(int i=0 ; i< machines.size() ; i++){
+            machines.get(i).print();
+        }
+
+    }
+}
