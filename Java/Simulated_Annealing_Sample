@@ -1,0 +1,63 @@
+/*    초기온도 설정
+      이웃해 <- 초기해 선택
+      costfunction 계산 <- f(후보해)
+      while(특정 조건 만족할 때까지 -> 수렴)
+         for(n번 수행)
+              이웃 <- perturbation(섭동; 미세한 이동(변화)) <- 비트열 표현 중 1비트 변환
+              costfunction 계산 <- f(이웃해)
+              d = f(이웃해) - f(초기해)
+              f(이웃해) 더 좋은 경우 : 선택 후보해 <- 이웃해
+              f(이웃해) 안좋은 경우
+                    그럼에도 불구하고 선택(후보해<- 이웃해)
+                    그래서 선택 x (후보해 <- 후보해)
+      초기온도 감소
+*/
+
+import java.util.*;
+
+class Main{
+    private static int perturb(int x){
+        String str = String.format("%5s", Integer.toBinaryString(x))
+                .replaceAll(" ","0");
+
+        Random r = new Random();
+        int idx = r.nextInt(str.length());
+        char[] tmp = str.toCharArray();
+        tmp[idx] = tmp[idx] =='0'?'1':'0';
+        String y = new String(tmp);
+
+        return Integer.parseInt(y, 2);
+    }
+    static int fit(int x){
+        return -x*x + 38*x + 80;
+    }
+    static int annealing(int n, float a, float t0){
+       Random random = new Random();
+       float t = t0;
+       int x = random.nextInt(32);  //[0,31]
+
+        int prev = fit(x);      //이전 값
+
+        for(int i=0 ; i<100;i++){       //while
+            for(int j=0 ; j<n ; j++){
+                int tmp = perturb(x);
+                int cur = fit(tmp);
+                int d = -(cur - prev);
+
+                float q = random.nextFloat();
+                if(q <= Math.exp(-d/t)) {
+                    x = tmp;
+                    prev = cur;
+                }
+            }
+            t *= a;
+        }
+
+        return x;
+    }
+    public static void main(String[] args){
+        int x = annealing(1000, 0.9f, 100);
+        System.out.println(x);          // expected : 19
+        System.out.println(fit(x));     // expected : 441
+    }
+}
